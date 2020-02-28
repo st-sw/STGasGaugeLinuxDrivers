@@ -1503,7 +1503,7 @@ int GasGauge_Task(GasGauge_DataTypeDef *GG)
 
 #ifdef BATD_UC8
 	/* check STC3117 status */
-	if ((BattData.STC_Status & (M_BATFAIL | M_UVLOD) != 0))
+	if ((BattData.STC_Status & (M_BATFAIL | M_UVLOD)) != 0)
 	{
 		/* BATD or UVLO detected */
 		if(BattData.ConvCounter > 0)
