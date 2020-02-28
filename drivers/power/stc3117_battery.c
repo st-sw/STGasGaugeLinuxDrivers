@@ -1500,10 +1500,10 @@ int GasGauge_Task(GasGauge_DataTypeDef *GG)
 	{
 		BattData.BattOnline = 0; 
 	}
-	/* check STC3117 status */
+
 #ifdef BATD_UC8
 	/* check STC3117 status */
-	if ((BattData.STC_Status & (M_BATFAIL | M_UVLOD) != 0)
+	if ((BattData.STC_Status & (M_BATFAIL | M_UVLOD) != 0))
 	{
 		/* BATD or UVLO detected */
 		if(BattData.ConvCounter > 0)
@@ -1950,6 +1950,12 @@ static void stc311x_work(struct work_struct *work)
 		GasGaugeData.ExternalTemperature = chip->pdata->ExternalTemperature(); /*External temperature fonction, return °C*/
 		GasGaugeData.ForceExternalTemperature = chip->pdata->ForceExternalTemperature; /* 1=External temperature, 0=STC3117 temperature */
 	}
+	else
+	{
+		dev_err(&sav_client->dev, "GasGauge parameters not initialized");
+		return; //error, do not continue without the right paramaters.
+	}
+	
 
 	res=GasGauge_Task(&GasGaugeData);  /* process gas gauge algorithm, returns results */
 	if (res>0) 
@@ -2027,13 +2033,13 @@ static int __devinit stc311x_probe(struct i2c_client *client,
 		ret = power_supply_register(&client->dev, &chip->battery);
 	if (ret)
 	{
-		//dev_err(&client->dev, "failed: power supply register\n");
+		dev_err(&client->dev, "failed registering power supply\n");
 
 		kfree(chip);
 		return ret;
 	}
 
-	dev_info(&client->dev, "power supply register,%d\n",ret);
+	dev_info(&client->dev, "power supply registered, %d\n", ret);
 
 
 	stc311x_get_version(client);
@@ -2163,12 +2169,14 @@ MODULE_DEVICE_TABLE(i2c, stc311x_id);
 
 static struct i2c_driver stc311x_i2c_driver = {
 	.driver	= {
-		.name	= "stc3117",
+		.name	= "stc3117-battery",
 	},
 	.probe		= stc311x_probe,
 	.remove		= __devexit_p(stc311x_remove),
+#ifdef CONFIG_PM
 	.suspend	= stc311x_suspend,    
 	.resume		= stc311x_resume,  
+#endif
 	.id_table	= stc311x_id,
 };
 
