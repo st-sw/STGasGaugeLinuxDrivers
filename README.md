@@ -1,7 +1,7 @@
-# STC3117 Linux Drivers (platform data)
+# ST Gas Gauge Linux Drivers (old version)
 STC311x Fuel Gauge / Gas Gauge / Battery monitoring
 
-Driver for Linux Kernel 2.6<br />
+Driver for Linux Kernel 2.6 (with Platform Data) <br />
 __Warning__: Not compatible with Device Tree (DT) <br />
 
 This repository contains the Linux drivers for STC3117 battery monitoring IC from STMicroelectronics.
